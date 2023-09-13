@@ -5,3 +5,7 @@ env
 .DS_Store
 
 .vscode
+
+blog_api.db
+
+images/
