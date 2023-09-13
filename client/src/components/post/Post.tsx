@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
+import Card from '../card/Card';
+import { config } from '../../../libs/constants';
+import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = 'http://localhost:8000/';
 
 interface PostItem {
+  id: number;
   image_url: string;
   title: string;
   creator: string;
@@ -21,21 +25,37 @@ function Post({ post }: PostProps) {
     setImageUrl(BASE_URL + image_url);
   }, []);
 
-  const handleDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleDelete = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event?.preventDefault();
+
+    const result = await axios.delete(`${config.BASE_URL}post/${post.id}`);
+    console.log(JSON.stringify(result));
+    // todo: handle error here
+    if (result.status === 200) {
+      window.location.reload();
+    }
   };
 
   return (
-    <div className="flex w-1/2 ml-auto mr-auto bg-white max-w-1/2 mb-12">
-      <img className="block w-1/3 object-contain pr-2 mb-auto" src={imageUrl} />
-      <div className="block">
-        <div className="text-3xl">{title}</div>
-        <div className="text-sm italic m-1 ml-2">by {creator}</div>
-        <div className="whitespace-pre-line">{content}</div>
-        <div className="m-2">
-          <button onClick={handleDelete}>Delete post</button>
+    <div className="w-1/2 ml-auto mr-auto max-w-1/2 mb-8">
+      <Card>
+        <div className="flex">
+          <img
+            className="block rounded-lg w-1/3 object-contain pr-2 mb-auto"
+            src={imageUrl}
+          />
+          <div className="block p-2">
+            <div className="text-3xl">{title}</div>
+            <div className="text-sm italic m-1 ml-2">by {creator}</div>
+            <div className="whitespace-pre-line">{content}</div>
+            <div className="m-2">
+              <button className="btn-warning" onClick={handleDelete}>
+                Delete post
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
